@@ -1,0 +1,78 @@
+{% extends "barangay/base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h6>System Users</h6> 
+                        <div class="d-flex justify-content-between">
+                             <a href="{% url 'user_roles_system' %}" class="btn btn-sm btn-primary">User Roles</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="row">
+                            {% for field in form %}
+                                <div class="col-sm-6">
+                                    {{ field.label_tag }}
+                                    {{ field|add_class:'form-control' }}
+                                    {{ field.errors }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="data" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Roles</th>
+                                    <th>Last online</th>
+                                    <th>Actions</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for list in list_user %}
+                                <tr>
+                                    <td>{{list.fname}} {{list.lname}}</td>
+                                    <td>{{list.userrole.role}}</td>
+                                    <td>{{list.last_login}}</td>
+                                    <td>
+                                        <a href="{% url 'user_system_delete' pk=list.id %}" class="btn btn-sm btn-danger">Delete</a>
+                                    </td>
+                                   
+                                </tr>
+                                {% endfor %}
+                                
+                                                                
+                            </tbody>
+                                                            
+                        </table>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock content %}
+    

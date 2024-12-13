@@ -44,34 +44,13 @@
             <div class="col-md-4">
                 <div class="card login-card">
                     <div class="card-body">
-                        <h3 class="text-center">Barangay Login</h3>
+                        <h3 class="text-center">Account Verifications</h3>
                         
-                        <form method="POST" enctype="multipart/form-data" id="form">
+                        <form method="post" action="{% url 'verify_email' %}">
                             {% csrf_token %}
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label for="Email">Email</label>
-                                    <input name="email" type="text" class="form-control" >
-                                </div>
-                                
-                                <div class="col-12">
-                                    <label for="subject">Password</label>
-                                    <input class="form-control" name="password" id="subject"  type="password">
-                                </div>
-                                <div class="col-12">
-                                   <div class="row">
-                                    
-                                    <div class="col-sm-12">
-                                        <div class="form-floating">
-                                            Forgot password ? <a href="{% url 'password_reset' %}" class="text-secondary"> Click Here </a>
-                                        </div>
-                                    </div>
-                                   </div>
-                                </div>
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary ">Log in</button>
-                                </div>
-                            </div>
+                            <label for="otp">Enter OTP:</label>
+                            <input type="text" name="otp" class="form-control" required>
+                            <button type="submit" class="btn btn-primary mt-3">Verify Code</button>
                         </form>
                         
                         

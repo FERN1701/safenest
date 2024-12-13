@@ -1,0 +1,30 @@
+{% extends "barangay/base.html" %}
+{% load static %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="row">
+      <div class="row">
+        <div class="col-sm-10">
+            <div class="card">
+                <div class="card-header">
+                    <h6>Yearly Monitoring</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="historicalChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <form action="" method="post">
+                <label for="">Date 1</label>
+                <input type="date" name="" class="form-control" id="">
+                <label for="">Date 2</label>
+                <input type="date" name="" class="form-control" id="">
+            </form>
+        </div>
+      </div>
+    </div>
+    
+</div>
+{% endblock content %}
+    

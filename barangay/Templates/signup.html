@@ -48,28 +48,34 @@
                         
                         <form method="POST" enctype="multipart/form-data" id="form">
                             {% csrf_token %}
-                            <div class="row g-3">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="Last">First Name</label>
+                                    <input type="text" class="form-control" name="{{ form.fname.name }}" id="{{ form.fname.id_for_label }}" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="Last">Last Name</label>
+                                    <input type="text" class="form-control" name="{{ form.lname.name }}" id="{{ form.lname.id_for_label }}" required>
+                                </div>
                                 <div class="col-12">
-                                    <label for="Email">Email</label>
-                                    <input name="email" type="text" class="form-control" >
+                                    <label for="Last">Email</label>
+                                    <input type="text" class="form-control" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="Last">Username</label>
+                                    <input type="text" class="form-control" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" required> 
                                 </div>
                                 
                                 <div class="col-12">
-                                    <label for="subject">Password</label>
-                                    <input class="form-control" name="password" id="subject"  type="password">
+                                    <label for="Last">Password</label>
+                                    <input type="password" class="form-control" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" required>
                                 </div>
                                 <div class="col-12">
-                                   <div class="row">
-                                    
-                                    <div class="col-sm-12">
-                                        <div class="form-floating">
-                                            Forgot password ? <a href="{% url 'password_reset' %}" class="text-secondary"> Click Here </a>
-                                        </div>
-                                    </div>
-                                   </div>
+                                    <label for="Last">Confirm Password</label>
+                                    <input type="password" class="form-control" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" required>
                                 </div>
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary ">Log in</button>
+                                <div class="col-12 mt-3">
+                                    <button id="loginBtn" type="submit"  class="btn btn-primary">Create Account</button>
                                 </div>
                             </div>
                         </form>

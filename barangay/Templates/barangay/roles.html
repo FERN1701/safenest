@@ -1,0 +1,66 @@
+
+
+
+{% extends "barangay/base.html" %}
+{% load static %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h6>System Users Roles</h6> 
+                        <div class="d-flex justify-content-between">
+                             <a href="{% url 'user_roles_system' %}" class="btn btn-sm btn-primary">User Roles</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                {{form.role}}
+                                <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                            </form>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="table-responsive">
+                                <table id="data" class="display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Roles</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for roles in roles %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{roles.role}}</td>
+                                            <td>
+                                                <a href="{% url 'user_roles_edit' pk=roles.id %}" class="btn btn-sm btn-primary">Edit</a>
+                                                <a href="{% url 'user_roles_delete' pk=roles.id %}" class="btn btn-sm btn-danger">Delete</a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}                     
+                                    </tbody>
+                                                                    
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock content %}
+    
