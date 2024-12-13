@@ -1,0 +1,139 @@
+{% extends "barangay/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="row">
+    <div class="col-xl-4 col-sm-4 col-12">
+            <div class="card" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;">
+                <div class="card-body">
+                    <div class="dash-widget-header">
+                        <span class="dash-widget-icon bg-primary">
+                            <i class="fi fi-rr-cloud-sun-rain"></i>
+                        </span>
+                        <div class="dash-count">
+                            <a href="" class="count-title">Water Status</a>
+                            <a href="" class="count "> <span id="waterLevelStatus"></span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-sm-4 col-12">
+            <div class="card" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;">
+                <div class="card-body">
+                    <div class="dash-widget-header">
+                        <span class="dash-widget-icon bg-primary">
+                            <i class="fe fe-users"></i>
+                        </span>
+                        <div class="dash-count">
+                            <a href="#" class="count-title">Users</a>
+                            <a href="#" class="count">{{list_user}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-sm-4 col-12">
+            <div class="card" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;">
+                <div class="card-body">
+                    <div class="dash-widget-header">
+                        <span class="dash-widget-icon bg-primary">
+                            <i class="fe fe-clock"></i>
+                        </span>
+                        <div class="dash-count p-1">
+                            <a href="#" class="count-title">Time</a>
+                            <a href="" class="btn btn-primary">{{current_datetime_with_tz}}</a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+    <div class="row mt-3">
+        <!-- Chart Section -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between p-1">
+                        <h6>Timely Status : <span id="waterLevelStatus" class="badge bg-primary"></span></h6>
+                        <div class="">
+                            <button onclick="printChart()" class="btn btn-success">Print Chart</button>
+                        </div>                          
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="">
+                        <canvas id="waterLevelChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calibration Section -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6>Calibrate Sensor and Thresholds</h6>
+                </div>
+                <div class="card-body">
+                    <!-- Sensor Height Input -->
+                    <div class="mb-3">
+                        <label for="sensorHeightInput" class="form-label">Sensor Height (cm)</label>
+                        <input 
+                            type="number" 
+                            id="sensorHeightInput" 
+                            class="form-control" 
+                            placeholder="Enter Sensor Height" 
+                        />
+                    </div>
+                    <!-- Low Threshold Input -->
+                    <div class="mb-3">
+                        <label for="lowThresholdInput" class="form-label">Low Threshold (cm)</label>
+                        <input 
+                            type="number" 
+                            id="lowThresholdInput" 
+                            class="form-control" 
+                            placeholder="Enter Low Threshold" 
+                        />
+                    </div>
+                    <!-- Medium Threshold Input -->
+                    <div class="mb-3">
+                        <label for="mediumThresholdInput" class="form-label">Medium Threshold (cm)</label>
+                        <input 
+                            type="number" 
+                            id="mediumThresholdInput" 
+                            class="form-control" 
+                            placeholder="Enter Medium Threshold" 
+                        />
+                    </div>
+                    <!-- High Threshold Input -->
+                    <div class="mb-3">
+                        <label for="highThresholdInput" class="form-label">High Threshold (cm)</label>
+                        <input 
+                            type="number" 
+                            id="highThresholdInput" 
+                            class="form-control" 
+                            placeholder="Enter High Threshold" 
+                        />
+                    </div>
+                    <!-- Calibrate Button -->
+                    <div class="text-end">
+                        <button 
+                            class="btn btn-primary w-100" 
+                            onclick="calibrateSensorAndThresholds()"
+                        >
+                            Calibrate
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+    

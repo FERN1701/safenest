@@ -1,0 +1,233 @@
+{% load static %}
+<script>
+    new DataTable('#data');
+	new DataTable('#printables', {
+		layout: {
+			topStart: {
+				buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+			}
+		}
+	});
+	function printChart() {
+   	 window.print();
+  }
+</script>
+
+<script>
+    // Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyBLEljKRdr3TBOz4WKtoD-wr6U3SNQq9jI",
+        authDomain: "water-level-cf938.firebaseapp.com",
+        databaseURL: "https://water-level-cf938-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "water-level-cf938",
+        storageBucket: "water-level-cf938.appspot.com",
+        messagingSenderId: "99109659503",
+        appId: "1:99109659503:web:74c87bbb7382f483163e9a"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var database = firebase.database();
+
+    // References to Firebase data
+    var waterLevelRef = database.ref('/WaterLevel/Distance');
+    var waterIndicatorRef = database.ref('/WaterIndicator');
+
+    // Create chart instance
+    var ctx = document.getElementById('waterLevelChart').getContext('2d');
+    var waterLevelChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],  // Placeholder for time labels
+            datasets: [{
+                label: 'Water Level (cm)',
+                data: [],  // Placeholder for water level values
+                borderColor: 'rgba(255, 0, 0, 1)',
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    },
+                    ticks: {
+                        maxRotation: 90,
+                        minRotation: 45
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Water Level (cm)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Function to update the graph
+    function updateChart(waterLevel) {
+        const currentTime = new Date().toLocaleTimeString();
+
+        waterLevelChart.data.labels.push(currentTime);
+        waterLevelChart.data.datasets[0].data.push(waterLevel);
+
+        // Limit chart to last 100 data points
+        if (waterLevelChart.data.labels.length > 100) {
+            waterLevelChart.data.labels.shift();
+            waterLevelChart.data.datasets[0].data.shift();
+        }
+
+        waterLevelChart.update();
+    }
+
+    // Function to update water level status
+    function updateWaterLevelStatus(status) {
+        const statusElement = document.getElementById("waterLevelStatus");
+
+        if (status === "high") {
+            statusElement.textContent = "Water Level is HIGH";
+            statusElement.style.color = "white";
+            statusElement.className = 'badge bg-danger';
+            window.location.href = "{% url 'emailalert' %}";
+        } else if (status === "medium") {
+            statusElement.textContent = "Water Level is MEDIUM";
+            statusElement.style.color = "white";
+            statusElement.className = 'badge bg-warning';
+        } else if (status === "low") {
+            statusElement.textContent = "Water Level is LOW";
+            statusElement.style.color = "white";
+            statusElement.className = 'badge bg-success';
+        } else {
+            statusElement.textContent = "Water Level is NORMAL";
+            statusElement.style.color = "white";
+            statusElement.className = 'badge bg-primary';
+        }
+    }
+
+    // Fetch data from Firebase to update the graph and status
+    waterLevelRef.on('value', (snapshot) => {
+        const distance = parseFloat(snapshot.val());
+        console.log("Fetched water level distance:", distance);
+
+        if (!isNaN(distance)) {
+            updateChart(distance);  // Update the graph
+        }
+    });
+
+    waterIndicatorRef.on('value', (snapshot) => {
+        const indicator = snapshot.val();
+
+        if (indicator.High) {
+            updateWaterLevelStatus("high");
+        } else if (indicator.Medium) {
+            updateWaterLevelStatus("medium");
+        } else if (indicator.Low) {
+            updateWaterLevelStatus("low");
+        } else {
+            updateWaterLevelStatus("normal");
+        }
+    });
+
+    const dbRef = database.ref("SensorConfig");
+
+    function fetchExistingSensorHeight() {
+        dbRef.once('value').then(snapshot => {
+            const existingData = snapshot.val() || {};
+            const existingSensorHeight = existingData.SensorHeight;
+    
+            if (existingSensorHeight) {
+                // Set the y-axis max to the existing sensor height
+                waterLevelChart.options.scales.y.max = existingSensorHeight;  // Set max to existing sensor height
+                waterLevelChart.update();  // Apply the changes
+            } else {
+                console.error("Sensor height not found in Firebase.");
+            }
+        }).catch(error => {
+            console.error("Error fetching existing data:", error);
+            alert("Failed to fetch existing sensor height from Firebase.");
+        });
+    }
+    // Call the fetchExistingSensorHeight function when the page loads
+    fetchExistingSensorHeight();
+
+    // Function to calibrate and update sensor height
+    function calibrateSensorAndThresholds() {
+        const sensorHeight = document.getElementById("sensorHeightInput");
+        const lowThreshold = document.getElementById("lowThresholdInput");
+        const mediumThreshold = document.getElementById("mediumThresholdInput");
+        const highThreshold = document.getElementById("highThresholdInput");
+    
+        // Validate inputs
+        if (!sensorHeight.value || sensorHeight.value <= 0) {
+            alert("Please enter a valid sensor height.");
+            return;
+        }
+        if (!lowThreshold.value || lowThreshold.value <= 0) {
+            alert("Please enter a valid low threshold.");
+            return;
+        }
+        if (!mediumThreshold.value || mediumThreshold.value <= 0) {
+            alert("Please enter a valid medium threshold.");
+            return;
+        }
+        if (!highThreshold.value || highThreshold.value <= 0) {
+            alert("Please enter a valid high threshold.");
+            return;
+        }
+    
+        // Fetch existing data to avoid overwriting fields
+        dbRef.once('value').then(snapshot => {
+            const existingData = snapshot.val() || {};
+            
+            // Merge new calibration data with existing data
+            const calibrationData = {
+                ...existingData,
+                SensorHeight: parseFloat(sensorHeight.value),
+                Low: parseFloat(lowThreshold.value),
+                Medium: parseFloat(mediumThreshold.value),
+                High: parseFloat(highThreshold.value),
+                Calibrated: true // Explicitly set to true
+            };
+    
+            console.log("Prepared calibrationData:", calibrationData);
+    
+            // Write to Firebase
+            dbRef.set(calibrationData)
+                .then(() => {
+                    alert("Calibration successful!");
+    
+                    // After calibration, update the chart's y-axis with the new sensor height
+                    const newSensorHeight = parseFloat(sensorHeight.value);
+                    waterLevelChart.options.scales.y.max = newSensorHeight;  // Set max to new sensor height
+                    waterLevelChart.update(); // Apply the changes
+    
+                    // Clear input fields
+                    sensorHeight.value = "";
+                    lowThreshold.value = "";
+                    mediumThreshold.value = "";
+                    highThreshold.value = "";
+                })
+                .catch((error) => {
+                    console.error("Error calibrating sensor and thresholds:", error);
+                    alert("Failed to calibrate sensor and thresholds.");
+                });
+        }).catch(error => {
+            console.error("Error fetching existing data:", error);
+            alert("Failed to fetch existing data for calibration.");
+        });
+    }
+
+</script>
+
+
+<script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'assets/js/script.js' %}"></script>

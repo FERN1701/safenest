@@ -1,0 +1,40 @@
+{% extends "barangay/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="row">
+        
+        
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4>My Profile</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            {% for field in form %}
+                                <div class="col-sm-6">
+                                    {{ field.label_tag }}
+                                    {{ field|add_class:'form-control' }}
+                                    {{ field.errors }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+{% endblock content %}
+    
